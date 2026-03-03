@@ -29,6 +29,7 @@ func NewRouter(deps Dependencies) http.Handler {
 	mcpHandler := mcpserver.NewHandler(mcpserver.Dependencies{
 		MasterKey:  deps.MasterKeyService,
 		Proxy:      deps.TavilyProxy,
+		Stats:      deps.StatsService,
 		Stateless:  deps.Config.MCPStateless,
 		SessionTTL: deps.Config.MCPSessionTTL,
 	})

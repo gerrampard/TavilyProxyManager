@@ -288,6 +288,7 @@ const loading = ref(false);
 const saving = ref(false);
 const syncStarting = ref(false);
 const deletingInvalid = ref(false);
+const syncingUsageIds = ref(new Set<number>());
 const invalidCount = computed(
   () => items.value.filter((item) => item.is_invalid).length
 );
@@ -588,7 +589,8 @@ async function resetQuota(row: KeyItem) {
 }
 
 async function syncUsage(row: KeyItem) {
-  if (row.is_invalid) return;
+  if (row.is_invalid || syncingUsageIds.value.has(row.id)) return;
+  syncingUsageIds.value.add(row.id);
   try {
     await api.put(`/api/keys/${row.id}`, { sync_usage: true });
     message.success(t("keys.messages.syncedFromUsage"));
@@ -596,6 +598,7 @@ async function syncUsage(row: KeyItem) {
     message.error(err?.response?.data?.error ?? t("common.syncFailed"));
   } finally {
     await refresh();
+    syncingUsageIds.value.delete(row.id);
   }
 }
 
@@ -780,6 +783,7 @@ const columns: DataTableColumns<KeyItem> = [
                       quaternary: true,
                       circle: true,
                       disabled: row.is_invalid,
+                      loading: syncingUsageIds.value.has(row.id),
                       onClick: () => syncUsage(row),
                     },
                     {
