@@ -301,13 +301,13 @@ def recognize_captcha_with_vision(captcha_base64: str, config: dict) -> str:
                 "content": [
                     {
                         "type": "text",
-                        "text": "Please identify the text/characters shown in this captcha image. Output only the captcha text, nothing else. The captcha typically consists of 6 alphanumeric characters and is case-sensitive.",
+                        "text": "识别图片中的字符，区分大小写，直接返回字符串",
                     },
                     {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{png_base64}"}},
                 ],
             }
         ],
-        "max_tokens": 50,
+        "max_tokens": 4096,
         "temperature": 0,
     }
 
